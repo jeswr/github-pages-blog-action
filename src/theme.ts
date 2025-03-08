@@ -92,7 +92,7 @@ export async function prepareTheme(configuration: ConfigurationType) {
       const content = fs.readFileSync(contentFilePath, 'utf-8');
       const parsed = fm(content)
 
-      let { title, date, permalink, externalUrl } = parsed.attributes;
+      let { title, date, permalink, externalUrl } = parsed.attributes as any;
 
       if (!date) {
         date = dayjs().format('ddd, MMMM DD, YYYY');
