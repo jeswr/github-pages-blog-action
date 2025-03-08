@@ -12,6 +12,7 @@
     <title><%- typeof post !== 'undefined' ? post.title : siteConfig.seo.title %></title>
     <meta name="description" content="<%- siteConfig.seo.description %>"/>
     <meta name="keywords" content="<%- siteConfig.seo.keywords %>"/>
+    <link rel="alternate" type="application/rss+xml" title="<%- siteConfig.seo.title %>" href="<%- `${siteConfig.baseUrl || ''}/` %>rss.xml" />
 
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Alegreya:400,400i|Lato:400,400i,700,900|Roboto+Mono:400,300">
@@ -32,5 +33,6 @@
         <a target="_blank" href="https://github.com/<%- siteConfig.social.github %>" class="link-github">GitHub</a>
         <a target="_blank" href="https://twitter.com/<%- siteConfig.social.twitter %>" class="link-twitter">Twitter</a>
         <a href="mailto:<%- siteConfig.owner.email %>" class="link-email">Email</a>
+        <a href="<%- `${siteConfig.baseUrl || ''}/` %>rss.xml" class="link-rss">RSS</a>
     </div>
 </nav>

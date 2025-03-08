@@ -72,7 +72,7 @@ export async function prepareTheme(configuration: ConfigurationType) {
       const outputPath = path.join(outputDir, nonPageFileName);
 
       fsExtra.copySync(nonPageFilePath, outputPath);
-    });
+    })
 
     if (siteConfig.cname) {
       fs.writeFileSync(path.join(outputDir, 'CNAME'), siteConfig.cname);
@@ -87,10 +87,10 @@ export async function prepareTheme(configuration: ConfigurationType) {
     const postFiles = fs.readdirSync(postsDir);
     const posts: PostType[] = [];
 
-    for (let contentFile of postFiles) {
+    for (const contentFile of postFiles) {
       const contentFilePath = path.join(postsDir, contentFile);
       const content = fs.readFileSync(contentFilePath, 'utf-8');
-      const parsed = fm(content) as FrontMatterResult<FrontMatterType>;
+      const parsed = fm(content)
 
       let { title, date, permalink, externalUrl } = parsed.attributes;
 
@@ -178,6 +178,58 @@ export async function prepareTheme(configuration: ConfigurationType) {
     fsExtra.copySync(staticAssetsPath, outputDir);
   }
 
+  async function generateRssFeed(posts: PostType[], siteConfig: SiteConfigType) {
+    info('Generating RSS feed');
+    const { Feed } = require('feed');
+
+    const siteUrl = siteConfig.cname
+      ? `https://${siteConfig.cname}`
+      : `https://${configuration.repositoryName.split('/')[0]}.github.io`;
+
+    const feed = new Feed({
+      title: siteConfig.title,
+      description: siteConfig.seo.description,
+      id: siteUrl,
+      link: siteUrl,
+      language: 'en',
+      image: `${siteUrl}/img/logo.png`,
+      favicon: `${siteUrl}/favicon.ico`,
+      copyright: `© ${new Date().getFullYear()} ${siteConfig.owner.name}`,
+      updated: new Date(),
+      feedLinks: {
+        rss: `${siteUrl}/rss.xml`
+      },
+      author: {
+        name: siteConfig.owner.name,
+        email: siteConfig.owner.email,
+        link: siteConfig.social?.github ? `https://github.com/${siteConfig.social.github}` : siteUrl
+      }
+    });
+
+    for (const post of posts) {
+      const url = post.externalUrl || `${siteUrl}${post.permalink}`;
+
+      feed.addItem({
+        title: post.title,
+        id: url,
+        link: url,
+        description: `${post.html.substring(0, 200)}...`,
+        content: post.html,
+        author: [
+          {
+            name: siteConfig.owner.name,
+            email: siteConfig.owner.email
+          }
+        ],
+        date: new Date(post.date)
+      });
+    }
+
+    fs.writeFileSync(path.join(outputDir, 'rss.xml'), feed.rss2());
+    // Optionally, also generate Atom feed
+    fs.writeFileSync(path.join(outputDir, 'atom.xml'), feed.atom1());
+  }
+
   // Remove and recreate the output directory
   fsExtra.removeSync(configuration.outputDir);
   fsExtra.ensureDirSync(configuration.outputDir);
@@ -186,6 +238,7 @@ export async function prepareTheme(configuration: ConfigurationType) {
   await prepareAbout();
   await prepareStaticPages();
   const posts = await prepareBlogPosts();
+  await generateRssFeed(posts, siteConfig);
   await prepareHome(posts);
   await copyStaticAssets();
 }

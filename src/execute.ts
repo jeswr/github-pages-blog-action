@@ -13,12 +13,7 @@ const output = { stdout: '', stderr: '' };
  * @param {boolean} ignoreReturnCode - Determines whether to throw an error
  * on a non-zero exit status or to leave implementation up to the caller.
  */
-export async function execute(
-  cmd: string,
-  cwd: string,
-  silent: boolean = false,
-  ignoreReturnCode: boolean = false
-) {
+export async function execute(cmd: string, cwd: string, silent = false, ignoreReturnCode = false) {
   output.stdout = '';
   output.stderr = '';
 

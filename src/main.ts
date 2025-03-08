@@ -18,9 +18,9 @@ run({
   pusherEmail: pusher?.email || process.env.GITHUB_PUSHER_EMAIL,
   repositoryName,
   hostname,
-  repoPath: repoPath,
+  repoPath,
   repoUrl: `https://x-access-token:${token}@${hostname}/${repositoryName}.git`,
-  outputDir: outputDir,
+  outputDir,
   branch,
   themeDir: path.join(__dirname, '../theme')
 });
