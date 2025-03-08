@@ -228,6 +228,17 @@ export async function prepareTheme(configuration: ConfigurationType) {
     fs.writeFileSync(path.join(outputDir, 'rss.xml'), feed.rss2());
     // Optionally, also generate Atom feed
     fs.writeFileSync(path.join(outputDir, 'atom.xml'), feed.atom1());
+
+    console.log('RSS feed generated');
+    console.log(fs.readdirSync(outputDir));
+
+
+    console.log('RSS feed content');
+    console.log(fs.readFileSync(path.join(outputDir, 'rss.xml'), 'utf-8'));
+
+    console.log('Atom feed content');
+    console
+      .log(fs.readFileSync(path.join(outputDir, 'atom.xml'), 'utf-8'));
   }
 
   // Remove and recreate the output directory
